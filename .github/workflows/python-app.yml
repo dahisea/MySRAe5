@@ -1,6 +1,6 @@
 
 
-name: Auto your check 
+name: Daily Build WU
 
 on: 
   release:
