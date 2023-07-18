@@ -1,5 +1,5 @@
-#更新refresh_token
-name: update refresh_token
+
+name: Update
 
 on: 
   release:
@@ -46,12 +46,12 @@ jobs:
         rm -f update2.py
         rm -f configid.txt
         rm -f configkey.txt 
-    - name: Commit #上传新的refresh_token到仓库
+    - name: Commit #上传新的refresh_token
       run: |
         git config --global user.email AutoupdateRobot@email.com
         git config --global user.name AutoupdateRobot
         git add .
-        git commit -m "update new refresh_token" -a
+        git commit -m "follow taffy thanks nya" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
