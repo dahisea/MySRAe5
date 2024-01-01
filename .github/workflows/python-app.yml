@@ -19,9 +19,9 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v2 # 変更
+      uses: actions/setup-python@v4 # 変更
       with:
         python-version: '3.8' # 変更
     - name: Install requests
