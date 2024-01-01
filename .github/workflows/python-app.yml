@@ -1,6 +1,4 @@
-
-
-name: Daily Build WU
+name: Daily Build
 
 on: 
   release:
@@ -22,24 +20,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: Set up Python #安装python
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install requests #安装requests
-      run: |
-        pip install requests
-    - name: Read config from secrets  #读取机密
+    - name: Install requests
+      run: pip install requests
+    - name: Read config from secrets
       env: 
-        CONFIG_ID: ${{ secrets.CONFIG_ID }} # secrets_id 提供
-        CONFIG_KEY: ${{ secrets.CONFIG_KEY }} # secrets_key 提供
+        CONFIG_ID: ${{ secrets.CONFIG_ID }}
+        CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
       run: | 
+        # Copy the original script and append the config values
         cp 1.py 2.py
-        echo $CONFIG_ID > configid.txt
-        echo $CONFIG_KEY > configkey.txt
-        sed -i '10 r configid.txt' 2.py
-        sed -i '12 r configkey.txt' 2.py
-    - name: Test Api #Api调用
-      run: | 
-        python 2.py
-
+        echo "config_id = $CONFIG_ID" >> 2.py
+        echo "config_key = $CONFIG_KEY" >> 2.py
+    - name: Test Api
+      run: python 2.py
