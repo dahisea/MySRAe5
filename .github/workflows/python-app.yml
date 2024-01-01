@@ -33,7 +33,10 @@ jobs:
       run: | 
         # Copy the original script and append the config values
         cp 1.py 2.py
-        echo "config_id = $CONFIG_ID" >> 2.py
-        echo "config_key = $CONFIG_KEY" >> 2.py
+        echo $CONFIG_ID > configid.txt
+        echo $CONFIG_KEY > configkey.txt
+        sed -i '10 r configid.txt' 2.py
+        sed -i '12 r configkey.txt' 2.py
     - name: Test Api
-      run: python 2.py
+      run: | 
+        python 2.py
