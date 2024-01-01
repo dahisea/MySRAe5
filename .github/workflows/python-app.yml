@@ -21,9 +21,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2 # 変更
       with:
-        python-version: 3.8
+        python-version: '3.8' # 変更
     - name: Install requests
       run: pip install requests
     - name: Read config from secrets
