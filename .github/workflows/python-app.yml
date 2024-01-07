@@ -1,13 +1,11 @@
-name: Daily Build
+name: Build
 
-on: 
+on:
   release:
     types: [published]
   push:
     tags:
     - 'v*'
-  #  branches: 
-  #    - master
   schedule:
     - cron: "0 * * * 1-4"
   watch:
@@ -31,12 +29,11 @@ jobs:
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
       run: | 
-        # Copy the original script and append the config values
         cp test.py run.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
         sed -i '10 r configid.txt' run.py
         sed -i '12 r configkey.txt' run.py
-    - name: Test API
+    - name: Build
       run: | 
-        python 2.py
+        python run.py
