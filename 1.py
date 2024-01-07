@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import requests as req
 import json, sys, time, random
 
@@ -31,7 +30,7 @@ def main():
         'Authorization': access_token,
         'Content-Type': 'application/json'
     }
-    print('run time :', localtime)
+    print('This run started at:', localtime)
     urls = [
         r'https://graph.microsoft.com/v1.0/me/drive/root',
         r'https://graph.microsoft.com/v1.0/me/drive',
@@ -49,7 +48,7 @@ def main():
         try:
             if req.get(url, headers=headers).status_code == 200:
                 num1 += 1
-                print(f"{i+1} success ×{num1}")
+                print(f"{i+1} call successful {num1} times")
         except:
             print("pass")
             pass
