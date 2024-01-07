@@ -32,10 +32,10 @@ jobs:
         cp update.py updater.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        sed -i '10 r configid.txt' update2.py
-        sed -i '12 r configkey.txt' update2.py
+        sed -i '10 r configid.txt' updater.py
+        sed -i '12 r configkey.txt' updater.py
     - name: Update token
-      run: python update2.py
+      run: python updater.py
     - name: Delete secrets config
       run: | 
         rm -f updater.py
@@ -43,10 +43,10 @@ jobs:
         rm -f configkey.txt 
     - name: Commit
       run: |
-        git config --global user.email AutoupdateRobot@email.com
+        git config --global user.email AutoupdateRobot@email.github
         git config --global user.name AutoupdateRobot
         git add .
-        git commit -m "follow taffy thanks nya" -a
+        git commit -m "Follow taffy, thanks, nya~" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
