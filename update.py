@@ -1,8 +1,7 @@
-# -*- coding: UTF-8 -*-
 import requests as req
 import json, sys, time
 
-path = sys.path[0] + r'/temp.txt'
+path = sys.path[0] + r'/1.txt'
 
 def gettoken(refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
