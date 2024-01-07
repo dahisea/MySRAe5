@@ -6,8 +6,6 @@ on:
   push:
     tags:
     - 'v*'
-  #  branches: 
-  #    - master
   schedule:
     - cron: "50 * * * *"
   watch:
@@ -17,13 +15,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    steps:
+    steps: 
     - name: Checkout
       uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4 # 変更
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.8' # 変更
+        python-version: '3.8'
     - name: Install requests
       run: pip install requests
     - name: Read config from secrets
@@ -31,7 +29,6 @@ jobs:
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
       run: | 
-        # Copy the original script and append the config values
         cp update.py update2.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
@@ -41,16 +38,13 @@ jobs:
       run: python update2.py
     - name: Delete secrets config
       run: | 
-        # Remove the temporary files
         rm -f update2.py
         rm -f configid.txt
         rm -f configkey.txt 
     - name: Commit
       run: |
-        # Set the user name and email for git
         git config --global user.email AutoupdateRobot@email.com
         git config --global user.name AutoupdateRobot
-        # Add and commit the changes
         git add .
         git commit -m "follow taffy thanks nya" -a
     - name: Push changes
