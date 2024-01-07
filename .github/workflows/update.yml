@@ -43,8 +43,8 @@ jobs:
         rm -f configkey.txt 
     - name: Commit
       run: |
-        git config --global user.email AutoupdateRobot@email.github
-        git config --global user.name AutoupdateRobot
+        git config --global user.email EpicTeamAdmin@users.noreply.github.com
+        git config --global user.name EpicTeamAdmin
         git add .
         git commit -m "Follow taffy, thanks, nya~" -a
     - name: Push changes
