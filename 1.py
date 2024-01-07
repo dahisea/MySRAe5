@@ -1,7 +1,7 @@
 import requests as req
 import json, sys, time, random
 
-path = sys.path[0] + r'/1.txt'
+path = sys.path[0] + r'/temp.txt'
 num1 = 0
 
 def gettoken(refresh_token):
