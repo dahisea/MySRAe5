@@ -37,6 +37,6 @@ jobs:
         echo $CONFIG_KEY > configkey.txt
         sed -i '10 r configid.txt' 2.py
         sed -i '12 r configkey.txt' 2.py
-    - name: Test Api
+    - name: Test API
       run: | 
         python 2.py
