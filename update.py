@@ -1,5 +1,7 @@
 import requests as req
-import json, sys, time
+import json
+import sys
+import time
 
 path = sys.path[0] + r'/1.txt'
 
