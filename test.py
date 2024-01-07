@@ -1,5 +1,8 @@
 import requests as req
-import json, sys, time, random
+import json
+import sys
+import time
+import random
 
 path = sys.path[0] + r'/temp.txt'
 num1 = 0
