@@ -2,20 +2,20 @@
 import requests as req
 import json, sys, time
 
-# 先注册azure应用,确保应用有以下权限:
-# files: Files.Read.All、Files.ReadWrite.All、Sites.Read.All、Sites.ReadWrite.All
-# user: User.Read.All、User.ReadWrite.All、Directory.Read.All、Directory.ReadWrite.All
-# mail: Mail.Read、Mail.ReadWrite、MailboxSettings.Read、MailboxSettings.ReadWrite
-# 注册后一定要再点代表xxx授予管理员同意,否则outlook api无法调用
+# Register an Azure app first, ensure the app has the following permissions:
+# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
+# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
+# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
+# After registration, be sure to click the button representing xxx to grant admin consent; otherwise, the Outlook API cannot be invoked.
 
-# 定义文件路径
+# Define the file path
 path = sys.path[0] + r'/temp.txt'
 
-# 定义获取token的函数
+# Define the function to get the token
 def gettoken(refresh_token):
-    # 定义请求头
+    # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    # 定义请求参数
+    # Define the request parameters
     data = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
@@ -23,27 +23,27 @@ def gettoken(refresh_token):
         'client_secret': secret,
         'redirect_uri': 'http://localhost:53682/'
     }
-    # 发送post请求
+    # Send a post request
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
-    # 解析响应结果
+    # Parse the response result
     jsontxt = json.loads(html.text)
-    # 获取新的token
+    # Get the new token
     refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
-    # 将新的token写入文件
+    # Write the new token to the file
     with open(path, 'w+') as f:
         f.write(refresh_token)
 
-# 定义主函数
+# Define the main function
 def main():
-    # 打开文件
+    # Open the file
     fo = open(path, "r+")
-    # 读取文件内容
+    # Read the file content
     refresh_token = fo.read()
-    # 关闭文件
+    # Close the file
     fo.close()
-    # 调用获取token的函数
+    # Call the function to get the token
     gettoken(refresh_token)
 
-# 执行主函数
+# Execute the main function
 main()
