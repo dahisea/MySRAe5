@@ -21,9 +21,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4 # 変更
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.8' # 変更
+        python-version: '3.8'
     - name: Install requests
       run: pip install requests
     - name: Read config from secrets
@@ -32,11 +32,11 @@ jobs:
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
       run: | 
         # Copy the original script and append the config values
-        cp 1.py 2.py
+        cp test.py run.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        sed -i '10 r configid.txt' 2.py
-        sed -i '12 r configkey.txt' 2.py
+        sed -i '10 r configid.txt' run.py
+        sed -i '12 r configkey.txt' run.py
     - name: Test API
       run: | 
         python 2.py
