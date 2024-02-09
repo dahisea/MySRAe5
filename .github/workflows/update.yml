@@ -35,7 +35,6 @@ jobs:
         cp update.py updater.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        echo ${{ secrets.P_KEY }} > public_key.txt
         sed -i '12 r configid.txt' updater.py
         sed -i '14 r configkey.txt' updater.py
         cat public_key.txt
