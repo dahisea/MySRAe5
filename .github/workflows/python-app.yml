@@ -28,10 +28,12 @@ jobs:
       env: 
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
+        S_KEY: ${{ secrets.S_KEY }}
       run: | 
         cp test.py run.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
+        echo $S_KEY > s.jks
         sed -i '10 r configid.txt' run.py
         sed -i '12 r configkey.txt' run.py
     - name: Build
