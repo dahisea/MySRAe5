@@ -41,7 +41,7 @@ def gettoken(refresh_token):
     access_token = jsontxt['access_token']
     # RSA encrypt the access_token
     with open(public_key_path, "rb") as key_file:
-        public_key = rsa.PublicKey.load_pkcs1(key_file.read())
+        public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
         encrypted_token = rsa.encrypt(access_token.encode(), public_key)
     # Write the encrypted token to the file
     with open(path, 'wb') as f:
