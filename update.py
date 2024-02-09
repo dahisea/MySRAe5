@@ -2,70 +2,68 @@
 import requests as req
 import json
 import sys
-import time
-import rsa # 导入pycryptodome库中的rsa模块
+import rsa
 
-# Register an Azure app first, ensure the app has the following permissions:
-# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
-# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
-# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
-# After registration, be sure to click the button representing xxx to grant admin consent; otherwise, the Outlook API cannot be invoked.
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Define the file path
 path = sys.path[0] + r'/temp.txt'
-# Define the public key path
+# Define the public key file path
 public_key_path = sys.path[0] + r'/public_key.pem'
+# Get the id and secret from elsewhere
 
 # Define the function to get the token
-def gettoken(refresh_token):
+def gettoken(id, secret):
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     # Define the request parameters
     data = {
-        'grant_type': 'refresh_token',
-        'refresh_token': refresh_token,
+        'grant_type': 'client_credentials',
         'client_id': id,
         'client_secret': secret,
-        'redirect_uri': 'http://localhost:53682/'
+        'scope': 'https://management.azure.com/.default'
     }
     # Send a post request
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     # Parse the response result
     jsontxt = json.loads(html.text)
-    # Get the new token
-    refresh_token = jsontxt['refresh_token']
-    access_token = jsontxt['access_token']
-    # Return the new token
-    return refresh_token, access_token
+    # Get the token
+    token = jsontxt['access_token']
+    # Write the token to the file
+    with open(path, 'w+') as f:
+        f.write(token)
+    # Return the token
+    return token
 
 # Define the function to encrypt the token
 def encrypt(token):
-    # Read the public key from the file
+    # Load the public key from the file
     with open(public_key_path, 'rb') as f:
-        public_key = rsa.PublicKey.load_pkcs1(f.read())
-    # Encrypt the token with the public key
-    encrypted_token = rsa.encrypt(token.encode(), public_key)
-    # Return the encrypted token
-    return encrypted_token
-
-# Define the function to write the encrypted token to the file
-def write(encrypted_token):
-    # Write the encrypted token to the file
-    with open(path, 'wb+') as f:
-        f.write(encrypted_token)
+        publickey = rsa.PublicKey.load_pkcs1(f.read())
+    # Encrypt the token using the public key
+    ciphertext = rsa.encrypt(token.encode(), publickey)
+    # Return the ciphertext
+    return ciphertext
 
 # Define the main function
 def main():
-    # Open the file
-    with open(path, "r+") as fo:
-        # Read the file content
-        refresh_token = fo.read()
     # Call the function to get the token
-    refresh_token, access_token = gettoken(refresh_token)
+    token = gettoken(id, secret)
     # Call the function to encrypt the token
-    encrypted_token = encrypt(access_token)
-    # Call the function to write the encrypted token to the file
-    write(encrypted_token)
+    ciphertext = encrypt(token)
+    # Print the ciphertext
+    print(ciphertext)
 
 # Execute the main function
 main()
