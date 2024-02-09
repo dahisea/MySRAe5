@@ -28,12 +28,14 @@ jobs:
       env: 
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
+        P_KEY: ${{ secrets.P_KEY }}
       run: | 
         cp update.py updater.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        sed -i '10 r configid.txt' updater.py
-        sed -i '12 r configkey.txt' updater.py
+        echo $P_KEY > public_key.pem
+        sed -i '12 r configid.txt' updater.py
+        sed -i '14 r configkey.txt' updater.py
     - name: Update token
       run: python updater.py
     - name: Delete secrets config
@@ -41,6 +43,7 @@ jobs:
         rm -f updater.py
         rm -f configid.txt
         rm -f configkey.txt 
+        rm -f public_key.pem
     - name: Commit
       run: |
         git config --global user.email EpicTeamAdmin@users.noreply.github.com
