@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
 
 # Define file paths
-private_key_path = sys.path[0] + '/private_key.pem'
+private_key_path = sys.path[0] + '/private_key.txt'
 token_path = sys.path[0] + '/temp.txt'
 num1 = 0
 
