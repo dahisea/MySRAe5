@@ -6,6 +6,22 @@ import time
 from cryptography.hazmat.primitives import serialization # 导入cryptography库中的serialization模块
 from cryptography.hazmat.primitives.asymmetric import padding # 导入cryptography库中的padding模块
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Register an Azure app first, ensure the app has the following permissions:
 # files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
 # user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
