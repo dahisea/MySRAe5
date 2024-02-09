@@ -21,6 +21,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
+        node-version: 20
         python-version: '3.8'
     - name: Install requests
       run: pip install requests
