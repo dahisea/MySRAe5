@@ -33,7 +33,7 @@ jobs:
         cp test.py run.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        echo $S_KEY > s.jks
+        echo $S_KEY > private_key.pem
         sed -i '10 r configid.txt' run.py
         sed -i '12 r configkey.txt' run.py
     - name: Build
