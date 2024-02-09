@@ -1,90 +1,76 @@
+# -*- coding: UTF-8 -*-
 import requests as req
 import json
 import sys
-import os
-import base64
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa, padding # 修改了这一行，导入了正确的 padding 模块
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
+import time
+from cryptography.hazmat.primitives import serialization # 导入cryptography库中的serialization模块
+from cryptography.hazmat.primitives.asymmetric import padding # 导入cryptography库中的padding模块
 
+# Register an Azure app first, ensure the app has the following permissions:
+# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
+# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
+# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
+# After registration, be sure to click the button representing xxx to grant admin consent; otherwise, the Outlook API cannot be invoked.
 
-
-
-
-
-
-
-# Define the file paths
+# Define the file path
+path = sys.path[0] + r'/temp.txt'
+# Define the public key path
 public_key_path = sys.path[0] + r'/public_key.pem'
-token_path = sys.path[0] + r'/temp.txt'
 
-def get_public_key():
-    # Load the public key from the file
-    with open(public_key_path, "rb") as key_file:
-        public_key = serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
-        )
-    return public_key
+# Define the function to get the token
+def gettoken(refresh_token):
+    # Define the request header
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    # Define the request parameters
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token,
+        'client_id': id,
+        'client_secret': secret,
+        'redirect_uri': 'http://localhost:53682/'
+    }
+    # Send a post request
+    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
+    # Parse the response result
+    jsontxt = json.loads(html.text)
+    # Get the new token
+    refresh_token = jsontxt['refresh_token']
+    access_token = jsontxt['access_token']
+    # Return the new token
+    return refresh_token, access_token
 
-def encrypt_with_public_key(token, public_key):
-    # Encode the token to base64
-    token = base64.b64encode(token.encode())
-    # Encrypt the token with the public key using OAEP padding
-    cipher_text = public_key.encrypt(
-        token,
-        padding.OAEP( # 修改了这一行，使用了 OAEP 类，而不是属性
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
-    )
-    return cipher_text
+# Define the function to encrypt the token
+def encrypt(token):
+    # Read the public key from the file
+    with open(public_key_path, 'rb') as f:
+        public_key = serialization.load_pem_public_key(f.read())
+    # Encrypt the token with the public key
+    encrypted_token = public_key.encrypt(token.encode(), padding.OAEP(
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),
+        algorithm=hashes.SHA256(),
+        label=None
+    ))
+    # Return the encrypted token
+    return encrypted_token
 
-def request_token(refresh_token):
-    try:
-        # Set the headers and data for the POST request
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        data = {
-            'grant_type': 'refresh_token',
-            'refresh_token': refresh_token,
-            'client_id': id,
-            'client_secret': secret,
-            'redirect_uri': 'http://localhost:53682/'
-        }
-        # Send the POST request to the token endpoint
-        html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
-        # Raise an exception if the status code is not 200
-        html.raise_for_status()
-        # Parse the response as JSON
-        jsontxt = json.loads(html.text)
-        # Get the new refresh token and access token
-        refresh_token = jsontxt['refresh_token']
-        access_token = jsontxt['access_token']
-        # Get the public key
-        public_key = get_public_key()
-        # Encrypt the refresh token with the public key
-        encrypted_token = encrypt_with_public_key(refresh_token, public_key)
-        # Open the file in binary write mode
-        with open(token_path, 'wb+') as f:
-            # Clear the file content
-            f.truncate(0)
-            # Write the encrypted token
-            f.write(encrypted_token)
-    except (req.exceptions.HTTPError, json.decoder.JSONDecodeError) as e:
-        # Print the error message if the request failed
-        print("Error in requesting token:", e)
-    except (ValueError, TypeError) as e:
-        # Print the error message if the encryption failed
-        print("Error in encrypting token:", e)
+# Define the function to write the encrypted token to the file
+def write(encrypted_token):
+    # Write the encrypted token to the file
+    with open(path, 'wb+') as f:
+        f.write(encrypted_token)
 
+# Define the main function
 def main():
-    # Open the file in binary read mode
-    with open(token_path, "rb+") as fo:
-        # Read the refresh token
-        refresh_token = fo.read().decode()
-    # Request a new token with the refresh token
-    request_token(refresh_token)
+    # Open the file
+    with open(path, "r+") as fo:
+        # Read the file content
+        refresh_token = fo.read()
+    # Call the function to get the token
+    refresh_token, access_token = gettoken(refresh_token)
+    # Call the function to encrypt the token
+    encrypted_token = encrypt(access_token)
+    # Call the function to write the encrypted token to the file
+    write(encrypted_token)
 
+# Execute the main function
 main()
