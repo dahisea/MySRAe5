@@ -4,10 +4,11 @@ import sys
 import os
 import base64
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, padding # 修改了这一行，导入了正确的 padding 模块
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
+
+
 
 
 
@@ -33,7 +34,7 @@ def encrypt_with_public_key(token, public_key):
     # Encrypt the token with the public key using OAEP padding
     cipher_text = public_key.encrypt(
         token,
-        padding.OAEP(
+        padding.OAEP( # 修改了这一行，使用了 OAEP 类，而不是属性
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
