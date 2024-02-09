@@ -24,8 +24,8 @@ jobs:
         python-version: 3.9
     - name: Install requests
       run: pip install requests
-    - name: Install cryptography
-      run: pip install cryptography
+    - name: Install rsa
+      run: pip install rsa
     - name: Read config from secrets
       env: 
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
