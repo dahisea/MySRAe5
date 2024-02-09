@@ -34,7 +34,7 @@ def load_public_key():
 def encrypt_token(token, public_key):
     cipher_text = public_key.encrypt(
         token.encode(),
-        padding.PKCS1v15()
+        padding.PKCS7(256)  # Use PKCS7 padding with a block size of 256 bits
     )
     return cipher_text
 
