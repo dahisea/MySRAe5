@@ -11,6 +11,16 @@ import random
 # mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
 # Make sure to grant admin consent after registration for Outlook API to work
 
+
+
+
+
+
+
+
+
+
+
 # Define file path
 path = sys.path[0] + '/temp.txt'
 # Define successful call count
