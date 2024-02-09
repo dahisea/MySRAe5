@@ -17,6 +17,8 @@ from cryptography.hazmat.primitives import hashes
 
 
 
+
+
 # Define the file paths
 public_key_path = sys.path[0] + r'/public_key.pem'
 token_path = sys.path[0] + r'/temp.txt'
@@ -32,11 +34,7 @@ def load_public_key():
 def encrypt_token(token, public_key):
     cipher_text = public_key.encrypt(
         token.encode(),
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
+        padding.PKCS1v15()
     )
     return cipher_text
 
