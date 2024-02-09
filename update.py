@@ -3,25 +3,7 @@ import requests as req
 import json
 import sys
 import time
-from cryptography.hazmat.primitives import serialization # 导入cryptography库中的serialization模块
-from cryptography.hazmat.primitives.asymmetric import padding # 导入cryptography库中的padding模块
-from cryptography.hazmat.primitives import hashes # 导入hashes模块
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import rsa # 导入pycryptodome库中的rsa模块
 
 # Register an Azure app first, ensure the app has the following permissions:
 # files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
@@ -60,13 +42,9 @@ def gettoken(refresh_token):
 def encrypt(token):
     # Read the public key from the file
     with open(public_key_path, 'rb') as f:
-        public_key = serialization.load_pem_public_key(f.read())
+        public_key = rsa.PublicKey.load_pkcs1(f.read())
     # Encrypt the token with the public key
-    encrypted_token = public_key.encrypt(token.encode(), padding.OAEP(
-        mgf=padding.MGF1(algorithm=hashes.SHA256()),
-        algorithm=hashes.SHA256(),
-        label=None
-    ))
+    encrypted_token = rsa.encrypt(token.encode(), public_key)
     # Return the encrypted token
     return encrypted_token
 
