@@ -20,7 +20,7 @@ import rsa
 # Define the file path
 path = sys.path[0] + r'/temp.txt'
 # Define the public key file path
-public_key_path = sys.path[0] + r'/public_key.pem'
+public_key_path = sys.path[0] + r'/public_key.txt'
 # Get the id and secret from elsewhere
 
 # Define the function to get the token
