@@ -5,6 +5,7 @@ import sys
 import time
 from cryptography.hazmat.primitives import serialization # 导入cryptography库中的serialization模块
 from cryptography.hazmat.primitives.asymmetric import padding # 导入cryptography库中的padding模块
+from cryptography.hazmat.primitives import hashes # 导入hashes模块
 
 
 
