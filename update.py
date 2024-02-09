@@ -8,6 +8,15 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives import hashes
 
+
+
+
+
+
+
+
+
+
 # Define the file paths
 public_key_path = sys.path[0] + r'/public_key.pem'
 token_path = sys.path[0] + r'/temp.txt'
