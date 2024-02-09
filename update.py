@@ -5,8 +5,9 @@ import time
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives import hashes
+
 
 
 
@@ -31,8 +32,11 @@ def load_public_key():
     return public_key
 
 def encrypt_token(token, public_key):
+    hashed_token = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    hashed_token.update(token.encode())
+    hashed_digest = hashed_token.finalize()
     cipher_text = public_key.encrypt(
-        token.encode(),
+        hashed_digest,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
