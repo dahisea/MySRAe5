@@ -33,18 +33,6 @@ def encrypt_token(token, public_key):
     )
     return cipher_text
 
-def decrypt_token(cipher_text, public_key):
-    token = public_key.decrypt(
-        cipher_text,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
-    )
-    token = base64.b64decode(token).decode() # Decode the token from base64
-    return token
-
 def gettoken(refresh_token):
     try:
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -70,5 +58,9 @@ def gettoken(refresh_token):
     except (ValueError, TypeError) as e:
         print("Error in encrypting token:", e)
 
+def main():
+    with open(token_path, "rb+") as fo: # Open the file in binary read mode
+        refresh_token = fo.read().decode() # Read the token
+    gettoken(refresh_token)
 
 main()
