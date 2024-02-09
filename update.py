@@ -2,6 +2,7 @@
 import requests as req
 import json
 import sys
+import time
 import rsa
 
 
@@ -15,55 +16,45 @@ import rsa
 
 
 
-
-
-# Define the file path
+# Define the file paths
 path = sys.path[0] + r'/temp.txt'
-# Define the public key file path
 public_key_path = sys.path[0] + r'/public_key.txt'
-# Get the id and secret from elsewhere
 
 # Define the function to get the token
-def gettoken(id, secret):
+def gettoken(refresh_token):
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     # Define the request parameters
     data = {
-        'grant_type': 'client_credentials',
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token,
         'client_id': id,
         'client_secret': secret,
-        'scope': 'https://management.azure.com/.default'
+        'redirect_uri': 'http://localhost:53682/'
     }
     # Send a post request
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     # Parse the response result
     jsontxt = json.loads(html.text)
-    # Get the token
-    token = jsontxt['access_token']
-    # Write the token to the file
-    with open(path, 'w+') as f:
-        f.write(token)
-    # Return the token
-    return token
-
-# Define the function to encrypt the token
-def encrypt(token):
-    # Load the public key from the file
-    with open(public_key_path, 'rb') as f:
-        publickey = rsa.PublicKey.load_pkcs1(f.read())
-    # Encrypt the token using the public key
-    ciphertext = rsa.encrypt(token.encode(), publickey)
-    # Return the ciphertext
-    return ciphertext
+    # Get the new token
+    refresh_token = jsontxt['refresh_token']
+    access_token = jsontxt['access_token']
+    # RSA encrypt the access_token
+    with open(public_key_path, "rb") as key_file:
+        public_key = rsa.PublicKey.load_pkcs1(key_file.read())
+        encrypted_token = rsa.encrypt(access_token.encode(), public_key)
+    # Write the encrypted token to the file
+    with open(path, 'wb') as f:
+        f.write(encrypted_token)
 
 # Define the main function
 def main():
+    # Open the file
+    with open(path, "r+") as fo:
+        # Read the file content
+        refresh_token = fo.read()
     # Call the function to get the token
-    token = gettoken(id, secret)
-    # Call the function to encrypt the token
-    ciphertext = encrypt(token)
-    # Print the ciphertext
-    print(ciphertext)
+    gettoken(refresh_token)
 
 # Execute the main function
 main()
