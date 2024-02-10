@@ -12,8 +12,8 @@ path = sys.path[0] + '/temp/temp.txt'
 numa = 0
 
 # Define client id and secret (replace with your actual values)
-CLIENT_ID = "your_client_id"
-CLIENT_SECRET = "your_client_secret"
+
+
 
 # Define the function to get a token
 def get_access_token(decoded_refresh_token):
@@ -34,8 +34,8 @@ def get_access_token(decoded_refresh_token):
 # Define the function to test API availability
 def main():
     with open(path, "r+") as file:
-        encoded_refresh_token = file.read()
-        decoded_refresh_token = base64.b64decode(encoded_refresh_token).decode('utf-8')
+        base64_encoded_refresh_token = file.read()
+        decoded_refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
 
     global numa
     localtime = time.asctime(time.localtime(time.time()))
