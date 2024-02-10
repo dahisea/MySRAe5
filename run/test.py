@@ -6,7 +6,7 @@ import time
 import random
 import base64
 
-path = sys.path[0] + '/temp.txt'
+path = sys.path[0] + '/temp/temp.txt'
 
 # Define successful call count
 numa = 0
