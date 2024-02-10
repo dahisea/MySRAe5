@@ -17,12 +17,12 @@ import rsa
 
 
 
+
+
+
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
-# Client ID and secret
-CLIENT_ID = 'YOUR_CLIENT_ID'
-CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
 
 def encrypt_data(data, public_key):
   return rsa.encrypt(data.encode(), public_key)
