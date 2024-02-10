@@ -14,6 +14,7 @@ path = sys.path[0] + '/temp/temp.txt'
 
 
 
+
 # Define successful call count
 num_successful_calls = 0
 
@@ -32,7 +33,7 @@ def get_access_token(refresh_token):
     json_data = json.loads(response.text)
     new_refresh_token = json_data['refresh_token']
     access_token = json_data['access_token']
-    return access_token
+    return access_token, new_refresh_token
 
 # Define the function to test API availability
 def test_api_availability():
@@ -43,7 +44,7 @@ def test_api_availability():
             refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
 
         localtime = time.asctime(time.localtime(time.time()))
-        access_token = get_access_token(refresh_token)
+        access_token, new_refresh_token = get_access_token(refresh_token)
         headers = {'Authorization': f"Bearer {access_token}", 'Content-Type': 'application/json'}
         print('This run started at:', localtime)
         urls = [
@@ -65,6 +66,11 @@ def test_api_availability():
             response.raise_for_status()  # Raise an exception for non-200 status codes
             print(f"{i+1}. Call to {url} successful ({num_successful_calls + 1} successful calls in total)")
             num_successful_calls += 1
+        
+        # Update the refresh token in the file
+        with open(path, "w") as file:
+            base64_encoded_new_refresh_token = base64.b64encode(new_refresh_token.encode('utf-8')).decode('utf-8')
+            file.write(base64_encoded_new_refresh_token)
 
     except Exception as e:
         print(f"Error occurred: {e}")
