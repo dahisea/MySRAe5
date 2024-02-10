@@ -25,9 +25,9 @@ jobs:
       run: | 
         cp ${{ github.workspace }}/run/test.py ${{ github.workspace }}/run.py
         echo ${{ secrets.CONFIG_ID }} > config_id.txt
-        sed -i '10 r config_id.txt' run.py
+        sed -i '15 r config_id.txt' run.py
         echo ${{ secrets.CONFIG_KEY }} > config_key.txt
-        sed -i '12 r config_key.txt' run.py
+        sed -i '16 r config_key.txt' run.py
     - name: Build
       run: | 
         python run.py
