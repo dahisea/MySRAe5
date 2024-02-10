@@ -21,23 +21,19 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: 3.9
+        python-version: 3.12
     - name: Install requests
       run: pip install requests
-    - name: Install cryptography
-      run: pip install cryptography
     - name: Read config from secrets
       env: 
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        S_KEY: ${{ secrets.S_KEY }}
       run: | 
         cp test.py run.py
-        echo $CONFIG_ID > configid.txt
-        echo $CONFIG_KEY > configkey.txt
-        echo $S_KEY > private_key.txt
-        sed -i '10 r configid.txt' run.py
-        sed -i '12 r configkey.txt' run.py
+        echo $CONFIG_ID > config_id.txt
+        echo $CONFIG_KEY > config_key.txt
+        sed -i '10 r config_id.txt' run.py
+        sed -i '12 r config_key.txt' run.py
     - name: Build
       run: | 
         python run.py
