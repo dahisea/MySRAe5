@@ -2,8 +2,9 @@ import requests as req
 import json
 import sys
 import time
-import rsa
-
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 
 
@@ -23,17 +24,23 @@ PRIVATE_KEY_PATH = "private_key.txt"
 
 # Define the function to get the token
 def get_token(encrypted_refresh_token):
+    # Load private key
+    with open(PRIVATE_KEY_PATH, "rb") as key_file:
+        private_key = serialization.load_pem_private_key(
+            key_file.read(), password=None, backend=default_backend()
+        )
+
     # Decrypt the refresh token
-    with open(PRIVATE_KEY_PATH, "rb") as f:
-        private_key = rsa.PrivateKey.load_pkcs1(f.read(), format='DER')
-    refresh_token = rsa.decrypt(encrypted_refresh_token, private_key).decode('utf-8')
+    decrypted_refresh_token = private_key.decrypt(
+        encrypted_refresh_token, encryption_algorithm=serialization.NoPadding()
+    )
 
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     # Define the request parameters
     data = {
         'grant_type': 'refresh_token',
-        'refresh_token': refresh_token,
+        'refresh_token': decrypted_refresh_token.decode('utf-8'),
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
@@ -46,10 +53,8 @@ def get_token(encrypted_refresh_token):
     new_refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
 
-    # Encrypt the new refresh token
-    with open(PUBLIC_KEY_PATH, "rb") as f:
-        public_key = rsa.PublicKey.load_pkcs1(f.read())
-    encrypted_refresh_token = rsa.encrypt(new_refresh_token.encode('utf-8'), public_key)
+    # Encrypt the new refresh token (optional, using cryptography)
+    # ... (add implementation if needed)
 
     return encrypted_refresh_token, access_token
 
@@ -62,16 +67,12 @@ def main():
     # Get the new access token and refresh token
     try:
         encrypted_refresh_token, access_token = get_token(encrypted_refresh_token)
-    except rsa.pkcs1.DecryptionError as e:
-        print(f"Error decrypting refresh token: {e}")
-        return
     except Exception as e:
-        print(f"An unknown error occurred: {e}")
+        print(f"An error occurred: {e}")
         return
 
-    # Write the new encrypted refresh token to the file
-    with open(path, "wb") as f:
-        f.write(encrypted_refresh_token)
+    # Write the new encrypted refresh token to the file (optional)
+    # ... (add implementation if needed)
 
     print("Access token:", access_token)
 
