@@ -9,21 +9,18 @@ import rsa
 
 
 
+
+
 # Define the file paths
 path = sys.path[0] + '/temp.txt'
 public_key_path = sys.path[0] + '/public_key.txt'
-private_key_path = sys.path[0] + '/private_key.txt'
-
-# Replace 'id' and 'secret' with your actual client ID and client secret
-id = 'your_client_id'
-secret = 'your_client_secret'
 
 # Define the function to get the token
 def gettoken(refresh_token):
     # Define the request header
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + (id + ':' + secret).encode('base64') # Add the authorization header
+        'Authorization': f'Basic {(id + ":" + secret).encode("base64")}' # Use f-string to format the header
     }
     # Define the request parameters
     data = {
@@ -42,26 +39,19 @@ def gettoken(refresh_token):
     # Check if the response contains an access token
     if 'access_token' in jsontxt:
         access_token = jsontxt['access_token']
-        # RSA encrypt the access_token
-        with open(public_key_path, "rb") as key_file:
-            public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
-            encrypted_token = rsa.encrypt(access_token.encode(), public_key)
-        # Write the encrypted token to the file
-        with open(path, 'wb') as f:
-            f.write(encrypted_token)
     else:
         print("Error: Access token not found in response.")
 
 # Define the main function
 def main():
     # Open the file in binary mode
-    with open(path, "rb") as fo:
+    with open(path, "rb") as fo: # Use with statement to automatically close the file
         # Read the file content
         encrypted_refresh_token = fo.read()
     # RSA decrypt the refresh token
-    with open(private_key_path, "rb") as key_file:
-        private_key = rsa.PrivateKey.load_pkcs1(key_file.read())
-        refresh_token = rsa.decrypt(encrypted_refresh_token, private_key).decode()
+    with open(public_key_path, "rb") as key_file: # Use with statement to automatically close the file
+        public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
+        refresh_token = rsa.decrypt(encrypted_refresh_token, public_key).decode()
     # Call the function to get the token
     gettoken(refresh_token)
 
