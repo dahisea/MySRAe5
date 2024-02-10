@@ -24,6 +24,7 @@ jobs:
       run: pip install requests
     - name: Read config from secrets
       run: | 
+        cd run
         cp update.py updater.py
         echo "${{ secrets.CONFIG_ID }}" > config_id.txt
         sed -i '6 r config_id.txt' updater.py
