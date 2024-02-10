@@ -32,7 +32,6 @@ def gettoken(refresh_token):
     # Define the request parameters
     data = {
         'grant_type': 'refresh_token',
-        'refresh_token': refresh_token,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
