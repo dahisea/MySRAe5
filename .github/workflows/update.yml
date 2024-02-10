@@ -35,7 +35,6 @@ jobs:
         cp update.py updater.py
         echo $CONFIG_ID > configid.txt
         echo $CONFIG_KEY > configkey.txt
-        echo $P_KEY > public_key.txt
         sed -i '12 r configid.txt' updater.py
         sed -i '14 r configkey.txt' updater.py
     - name: Update token
@@ -45,7 +44,6 @@ jobs:
         rm -f updater.py
         rm -f configid.txt
         rm -f configkey.txt 
-        rm -f public_key.txt
     - name: Commit
       run: |
         git config --global user.email EpicTeamAdmin@users.noreply.github.com
