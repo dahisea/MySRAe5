@@ -1,41 +1,22 @@
+# -*- coding: UTF-8 -*-
 import requests as req
 import json
 import sys
 import time
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.backends import default_backend
+import random
 
+# Register an Azure app with the following permissions:
+# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
+# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
+# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
+# Make sure to grant admin consent after registration for Outlook API to work
 
-
-
-
-
-# Define file paths
-private_key_path = sys.path[0] + '/private_key.txt'
-token_path = sys.path[0] + '/temp.txt'
+# Define file path
+path = sys.path[0] + '/temp.txt'
+# Define successful call count
 num1 = 0
 
-def load_private_key():
-    with open(private_key_path, "rb") as key_file:
-        private_key = serialization.load_pem_private_key(
-            key_file.read(),
-            password=None,
-            backend=default_backend()
-        )
-    return private_key
-
-def decrypt_token(encrypted_token, private_key):
-    token = private_key.decrypt(
-        encrypted_token,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=padding.MGF1.ALGORITHM.SHA256),
-            algorithm=padding.OAEPAlgorithm.SHA256,
-            label=None
-        )
-    )
-    return token.decode()
-
+# Define the function to get a token
 def get_token(refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
@@ -51,11 +32,10 @@ def get_token(refresh_token):
     access_token = jsontxt['access_token']
     return access_token
 
+# Define the function to test API availability
 def main():
-    private_key = load_private_key()
-    with open(token_path, "rb") as fo:
-        encrypted_token = fo.read()
-    refresh_token = decrypt_token(encrypted_token, private_key)
+    with open(path, "r+") as fo:
+        refresh_token = fo.read()
 
     global num1
     localtime = time.asctime(time.localtime(time.time()))
@@ -88,6 +68,7 @@ def main():
             print("pass")
             pass
 
+# Execute 6 times
 for _ in range(6):
     main()
     time.sleep(random.randint(100, 300))
