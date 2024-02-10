@@ -15,8 +15,6 @@ import base64
 
 
 
-
-
 # Register an Azure app first, ensure the app has the following permissions:
 # files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
 # user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
@@ -25,10 +23,11 @@ import base64
 PATH = sys.path[0] + '/temp.txt'
 PUBLIC_KEY_PATH = sys.path[0] + '/public_key.txt'
 TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+SCOPE = 'User.Read' # Replace with your desired scope
 
 def get_token():
     # Read the refresh token from the file
-    with open(PATH, 'r') as file:
+    with open(PATH, 'rb') as file: # Use binary mode to read the file
         refresh_token = file.read()
     # Define the request header
     headers = {
@@ -49,7 +48,7 @@ def get_token():
         # Get the new refresh token
         refresh_token = response_json.get('refresh_token')
         # Write the new refresh token to the file
-        with open(PATH, 'w+') as file:
+        with open(PATH, 'wb') as file: # Use binary mode to write the file
             file.write(refresh_token)
         # Return the access token
         return response_json.get('access_token')
@@ -72,6 +71,16 @@ def encrypt_token(token, public_key):
         print("Error: Token or public key is None.")
         return None
 
+def write_to_file(data, file_path):
+    if data is not None and file_path is not None:
+        try:
+            with open(file_path, 'wb') as file:
+                file.write(data)
+        except IOError as e:
+            print(f"Error: Failed to write to file - {e}")
+    else:
+        print("Error: Data or file path is None.")
+
 def main():
     # Get the access token
     access_token = get_token()
@@ -79,7 +88,7 @@ def main():
     # Use the access token to access the Outlook API
     # ...
     # Get the refresh token from the file
-    with open(PATH, 'r') as file:
+    with open(PATH, 'rb') as file: # Use binary mode to read the file
         refresh_token = file.read()
     # Encrypt the refresh token
     with open(PUBLIC_KEY_PATH, "rb") as key_file:
