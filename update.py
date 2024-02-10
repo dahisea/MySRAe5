@@ -3,8 +3,18 @@ import json
 import sys
 import time
 
-CLIENT_SECRET = 'V378Q~w9Ox-guKNNF4Y0_zCjRIVwNwKbQLnzOduZ'
-CLIENT_ID = 'c9c9ab50-df3c-4837-a8cc-f0320a7d9214'
+
+
+
+
+
+
+
+
+
+
+
+
 TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 path = sys.path[0] + r'/temp.txt'
 
