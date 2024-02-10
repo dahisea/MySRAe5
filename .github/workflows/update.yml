@@ -33,7 +33,7 @@ jobs:
         sed -i '6 r configid.txt' updater.py
         echo "${{ secrets.CONFIG_KEY }}" > configkey.txt
         sed -i '8 r configkey.txt' updater.py
-        echo "${{ secrets.YOUR_PUBLIC_KEY_SECRET }}" | sed 's/\\n/\n/g' > public_key.txt
+        echo "${{ secrets.P_KEY }}" | sed 's/\\n/\n/g' > public_key.txt
         
     - name: Update token
       run: python updater.py
