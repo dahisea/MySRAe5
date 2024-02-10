@@ -34,8 +34,8 @@ jobs:
     - name: Delete secrets config
       run: | 
         rm -f updater.py
-        rm -f configid.txt
-        rm -f configkey.txt 
+        rm -f config_id.txt
+        rm -f config_key.txt 
         rm -f public_key.txt 
         rm -f private_key.txt
     - name: Commit
