@@ -1,11 +1,9 @@
 name: Update
 
-on: 
-  release:
-    types: [published]
+on:
   push:
-    tags:
-    - 'v*'
+    branches:
+      - '*'
   schedule:
     - cron: "50 * * * *"
   watch:
