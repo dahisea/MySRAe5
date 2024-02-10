@@ -42,13 +42,13 @@ def get_token(refresh_token):
     # Get the new token
     refresh_token = jsontxt['refresh_token']
     # Write the new token to the file
-    with open(path, 'w+') as f:
+    with open(path, 'wb') as f:
         f.write(refresh_token)
 
 # Define the main function
 def main():
     # Open the file
-    with open(path, "r+") as fo:
+    with open(path, "rb") as fo:
         # Read the file content
         refresh_token = fo.read()
     # Call the function to get the token
