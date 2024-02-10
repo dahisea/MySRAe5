@@ -12,34 +12,34 @@ path = sys.path[0] + '/temp/temp.txt'
 numa = 0
 
 # Define client id and secret (replace with your actual values)
-
-
+CLIENT_ID = "your_client_id"
+CLIENT_SECRET = "your_client_secret"
 
 # Define the function to get a token
-def get_token(refresh_token):
+def get_access_token(decoded_refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
         'grant_type': 'refresh_token',
-        'refresh_token': refresh_token,
+        'refresh_token': decoded_refresh_token,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
     }
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     jsontxt = json.loads(html.text)
-    refresh_token = jsontxt['refresh_token']
+    new_refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
     return access_token
 
 # Define the function to test API availability
 def main():
-    with open(path, "r+") as fo:
-        encoded_refresh_token = fo.read()
-        refresh_token = base64.b64decode(encoded_refresh_token).decode('utf-8')
+    with open(path, "r+") as file:
+        encoded_refresh_token = file.read()
+        decoded_refresh_token = base64.b64decode(encoded_refresh_token).decode('utf-8')
 
     global numa
     localtime = time.asctime(time.localtime(time.time()))
-    access_token = get_token(refresh_token)
+    access_token = get_access_token(decoded_refresh_token)
     headers = {
         'Authorization': access_token,
         'Content-Type': 'application/json'
