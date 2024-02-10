@@ -1,10 +1,9 @@
+import sys # 导入 sys 模块
 import requests
 import rsa
-import sys
 import os
 import multiprocessing
-
-
+import yaml # 导入 yaml 模块
 
 
 
@@ -88,12 +87,12 @@ def main():
         encrypted_token = f.read()
     # Create a pool of processes
     pool = multiprocessing.Pool()
-    # Use map to apply functions to encrypted token
-    results = pool.map([read_private_key, decrypt_refresh_token], [encrypted_token] * 2)
+    # Use map to apply lambda function to encrypted token
+    results = pool.map(lambda x: (read_private_key(x), decrypt_refresh_token(x)), [encrypted_token] * 2)
     # Close the pool
     pool.close()
     # Unpack the results
-    private_key, decrypted_token = results
+    private_key, decrypted_token = zip(*results)
     # Call function to get token
     get_token(decrypted_token)
 
