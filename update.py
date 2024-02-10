@@ -1,11 +1,7 @@
 import requests as req
 import json
 import sys
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
+import base64  # Import for base64 encoding
 
 
 
@@ -16,71 +12,52 @@ from cryptography.hazmat.primitives import hashes
 
 
 
-# Define the file path
+
 path = sys.path[0] + '/temp.txt'
 
-# RSA key paths
-PUBLIC_KEY_PATH = "public_key.txt"
-PRIVATE_KEY_PATH = "private_key.txt"
-
 # Define the function to get the token
-def get_token(encrypted_refresh_token):
-    # Load private key
-    with open(PRIVATE_KEY_PATH, "rb") as key_file:
-        private_key = serialization.load_pem_private_key(
-            key_file.read(), password=None, backend=default_backend()
-        )
+def get_token(base64_encoded_refresh_token):
+    # Decode base64-encoded refresh token
+    decoded_refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
 
-    # Decrypt the refresh token
-    decrypted_refresh_token = private_key.decrypt(
-        encrypted_refresh_token,
-        padding.PKCS1v15()
-    )
+    # Define the request header
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    # Define the request parameters
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': decoded_refresh_token,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'redirect_uri': 'http://localhost:53682/'
+    }
+    # Send a post request
+    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
+    # Parse the response result
+    jsontxt = json.loads(html.text)
+    access_token = jsontxt['access_token']
 
-    # Simulate getting new refresh token (in real scenario, this would come from the OAuth response)
-    new_refresh_token = "new_refresh_token_example"
+    # Base64 encode the new refresh token
+    new_refresh_token = jsontxt['refresh_token']
+    base64_encoded_new_refresh_token = base64.b64encode(new_refresh_token.encode('utf-8')).decode('utf-8')
 
-    # Load public key
-    with open(PUBLIC_KEY_PATH, "rb") as key_file:
-        public_key = serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
-        )
-
-    # Encrypt the new refresh token
-    try:
-        encrypted_new_refresh_token = public_key.encrypt(
-            new_refresh_token.encode(),
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                algorithm=hashes.SHA256(),
-                label=None
-            )
-        )
-    except Exception as e:
-        print(f"Encryption failed: {e}")
-        raise e
-
-    return encrypted_refresh_token, encrypted_new_refresh_token
+    return access_token, base64_encoded_new_refresh_token
 
 # Define the main function
 def main():
-    # Read the encrypted refresh token from the file
+    # Read the base64-encoded refresh token from the file
     with open(path, "rb") as f:
-        encrypted_refresh_token = f.read()
+        base64_encoded_refresh_token = f.read().decode('utf-8')
 
-    # Get the new access token and encrypted new refresh token
+    # Get the new access token and base64-encoded new refresh token
     try:
-        encrypted_refresh_token, encrypted_new_refresh_token = get_token(encrypted_refresh_token)
+        access_token, base64_encoded_new_refresh_token = get_token(base64_encoded_refresh_token)
     except Exception as e:
         print(f"An error occurred: {e}")
         return
 
-    # Write the new encrypted refresh token to the file
+    # Write the new base64-encoded refresh token to the file
     with open(path, "wb") as f:
-        f.write(encrypted_new_refresh_token)
-
-    print("New encrypted refresh token:", encrypted_new_refresh_token.hex())
+        f.write(base64_encoded_new_refresh_token.encode('utf-8'))
 
 # Execute the main function
 main()
