@@ -25,10 +25,10 @@ jobs:
     - name: Read config from secrets
       run: | 
         cp update.py updater.py
-        echo "${{ secrets.CONFIG_ID }}" > configid.txt
-        sed -i '6 r configid.txt' updater.py
-        echo "${{ secrets.CONFIG_KEY }}" > configkey.txt
-        sed -i '7 r configkey.txt' updater.py
+        echo "${{ secrets.CONFIG_ID }}" > config_id.txt
+        sed -i '6 r config_id.txt' updater.py
+        echo "${{ secrets.CONFIG_KEY }}" > config_key.txt
+        sed -i '7 r config_key.txt' updater.py
     - name: Update token
       run: python updater.py
     - name: Delete secrets config
