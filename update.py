@@ -14,6 +14,7 @@ import time
 
 
 
+
 # Register an Azure app first, ensure the app has the following permissions:
 # files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
 # user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
@@ -24,7 +25,7 @@ import time
 path = sys.path[0] + r'/temp.txt'
 
 # Define the function to get the token
-def get_token(refresh_token):
+def gettoken(refresh_token):
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     # Define the request parameters
@@ -39,24 +40,21 @@ def get_token(refresh_token):
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     # Parse the response result
     jsontxt = json.loads(html.text)
-    # Check if 'refresh_token' key exists in the response
-    if 'refresh_token' in jsontxt:
-        # Get the new token
-        refresh_token = jsontxt['refresh_token']
-        # Write the new token to the file
-        with open(path, 'wb') as f:
-            f.write(refresh_token.encode('utf-8'))
-    else:
-        print("Error: 'refresh_token' not found in response.")
+    # Get the new token
+    refresh_token = jsontxt['refresh_token']
+    access_token = jsontxt['access_token']
+    # Write the new token to the file
+    with open(path, 'w+') as f:
+        f.write(refresh_token)
 
 # Define the main function
 def main():
     # Open the file
-    with open(path, "rb") as fo:
+    with open(path, "r+") as fo:
         # Read the file content
         refresh_token = fo.read()
     # Call the function to get the token
-    get_token(refresh_token)
+    gettoken(refresh_token)
 
 # Execute the main function
 main()
