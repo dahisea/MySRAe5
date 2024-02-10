@@ -1,35 +1,23 @@
-import sys
 import requests
 import rsa
-
-
-
-
-
-
-
-
-
-
-
+import json
 
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
-# File paths
-public_key_path = 'public_key.txt'
-private_key_path = 'private_key.txt'
-encrypted_file_path = 'temp.txt'
+# Get configuration
+config = json.load(open('config.json'))
 
-# Function to encrypt data
+# Get client ID and secret
+CLIENT_ID = config['client_id']
+CLIENT_SECRET = config['client_secret']
+
 def encrypt_data(data, public_key):
   return rsa.encrypt(data.encode(), public_key)
 
-# Function to decrypt data
 def decrypt_data(encrypted_data, private_key):
   return rsa.decrypt(encrypted_data, private_key).decode()
 
-# Function to get token
 def get_token(refresh_token):
   # Request headers
   headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -50,17 +38,16 @@ def get_token(refresh_token):
     new_refresh_token = token_data['refresh_token']
     access_token = token_data['access_token']
     # Write new token to file
-    with open(encrypted_file_path, 'wb') as f:
+    with open('temp.txt', 'wb') as f:
       encrypted_token = encrypt_data(new_refresh_token, public_key)
       f.write(encrypted_token)
   except requests.RequestException as e:
     print(f"Error fetching token: {e}")
 
-# Function to read private key
 def read_private_key():
   try:
     # Read private key
-    with open(private_key_path, 'rb') as f:
+    with open('private_key.txt', 'rb') as f:
       private_key_data = f.read()
     # Check if data is a sequence
     if isinstance(private_key_data, Sequence):
@@ -73,7 +60,6 @@ def read_private_key():
   except rsa.DecryptionError as e:
     print(f"Error decrypting private key: {e}")
 
-# Function to decrypt refresh token
 def decrypt_refresh_token(encrypted_token, private_key):
   try:
     # Decrypt refresh token
@@ -82,10 +68,9 @@ def decrypt_refresh_token(encrypted_token, private_key):
   except rsa.DecryptionError as e:
     print(f"Error decrypting refresh token: {e}")
 
-# Function to main
 def main():
   # Read encrypted token
-  with open(encrypted_file_path, 'rb') as f:
+  with open('temp.txt', 'rb') as f:
     encrypted_token = f.read()
   # Decrypt refresh token
   private_key = read_private_key()
