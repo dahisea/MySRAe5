@@ -86,8 +86,8 @@ def main():
         encrypted_token = f.read()
     # Create a pool of processes
     pool = multiprocessing.Pool()
-    # Use map to apply generator expression to encrypted token
-    results = pool.map((lambda x: (read_private_key(x), decrypt_refresh_token(x))) for x in [encrypted_token] * 2)
+    # Use map to apply lambda function to encrypted token
+    results = pool.map(lambda x: (read_private_key(x), decrypt_refresh_token(x)), [encrypted_token] * 2)
     # Close the pool
     pool.close()
     # Unpack the results
