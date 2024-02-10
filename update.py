@@ -39,11 +39,15 @@ def get_token(refresh_token):
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     # Parse the response result
     jsontxt = json.loads(html.text)
-    # Get the new token
-    refresh_token = jsontxt['refresh_token']
-    # Write the new token to the file
-    with open(path, 'wb') as f:
-        f.write(refresh_token.encode('utf-8'))
+    # Check if 'refresh_token' key exists in the response
+    if 'refresh_token' in jsontxt:
+        # Get the new token
+        refresh_token = jsontxt['refresh_token']
+        # Write the new token to the file
+        with open(path, 'wb') as f:
+            f.write(refresh_token.encode('utf-8'))
+    else:
+        print("Error: 'refresh_token' not found in response.")
 
 # Define the main function
 def main():
