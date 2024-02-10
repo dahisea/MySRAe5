@@ -3,10 +3,11 @@ import json
 import sys
 import base64  # Import for base64 encoding
 
-
-
-
 path = sys.path[0] + '/temp/temp.txt'
+
+# Define client id and secret (replace with your actual values)
+
+
 
 # Define the function to get the token
 def get_token(base64_encoded_refresh_token):
