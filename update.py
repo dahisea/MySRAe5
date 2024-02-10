@@ -3,18 +3,17 @@ import requests
 import rsa
 import os
 
-
-
-
-
-
-
-
-
-
-
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+
+
+
+
+
+
+
+
+
 
 # File paths
 public_key_path = os.path.join(sys.path[0], 'public_key.txt')
@@ -62,12 +61,16 @@ def read_private_key():
     # Read private key
     with open(private_key_path, 'rb') as f:
       private_key_data = f.read()
-      private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
+    # Check if data is a sequence
+    if isinstance(private_key_data, Sequence):
+      raise TypeError("Private key data should be bytes, not a sequence.")
+    # Load private key
+    private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
     return private_key
   except FileNotFoundError as e:
     print(f"File not found: {e}")
-  except rsa.RSAError as e:
-    print(f"RSA error: {e}")
+  except rsa.DecryptionError as e:
+    print(f"Error decrypting private key: {e}")
 
 # Function to decrypt refresh token
 def decrypt_refresh_token(encrypted_token, private_key):
@@ -75,8 +78,8 @@ def decrypt_refresh_token(encrypted_token, private_key):
     # Decrypt refresh token
     decrypted_token = decrypt_data(encrypted_token, private_key)
     return decrypted_token
-  except rsa.RSAError as e:
-    print(f"RSA error: {e}")
+  except rsa.DecryptionError as e:
+    print(f"Error decrypting refresh token: {e}")
 
 # Function to main
 def main():
