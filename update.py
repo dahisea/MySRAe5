@@ -14,7 +14,6 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 
 
-
 # Define the file path
 path = sys.path[0] + '/temp.txt'
 
@@ -50,8 +49,8 @@ def get_token(encrypted_refresh_token):
     encrypted_new_refresh_token = public_key.encrypt(
         new_refresh_token.encode(),
         padding.OAEP(
-            mgf=padding.MGF1(algorithm=padding.MGF1.ALGORITHMS.SHA1),
-            algorithm=padding.OAEP.ALGORITHMS.SHA1,
+            mgf=padding.MGF1(algorithm=padding.algorithms.MGF1.SHA1),
+            algorithm=padding.OAEP.ALGORITHM.SHA1,
             label=None
         )
     )
