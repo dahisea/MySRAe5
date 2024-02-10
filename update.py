@@ -18,8 +18,8 @@ import rsa
 path = sys.path[0] + r'/temp.txt'
 
 # RSA key paths
-PUBLIC_KEY_PATH = "public_key.pem"
-PRIVATE_KEY_PATH = "private_key.pem"
+PUBLIC_KEY_PATH = "public_key.txt"
+PRIVATE_KEY_PATH = "private_key.txt"
 
 # Define the function to get the token
 def get_token(encrypted_refresh_token):
