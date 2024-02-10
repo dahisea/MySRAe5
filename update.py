@@ -1,16 +1,20 @@
 import requests as req
 import sys
 import rsa
-
-
-
-
-
-
+import codecs # Import the codecs module
+import base64 # Import the base64 module
 
 # Define the file paths
 path = sys.path[0] + '/temp.txt'
 public_key_path = sys.path[0] + '/public_key.txt'
+
+
+
+
+
+
+
+
 
 
 # Define the function to get the token
@@ -18,7 +22,10 @@ def gettoken():
     # Define the request header
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': f'Basic {(id + ":" + secret).encode("base64")}' # Use f-string to format the header
+        # Use codecs.encode to encode the string to base64
+        'Authorization': f'Basic {codecs.encode((id + ":" + secret).encode("utf-8"), "base64").decode("utf-8")}'
+        # Or use base64.b64encode to encode the string to base64
+        # 'Authorization': f'Basic {base64.b64encode((id + ":" + secret).encode("utf-8")).decode("utf-8")}'
     }
     # Define the request parameters
     data = {
