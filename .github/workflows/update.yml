@@ -40,6 +40,8 @@ jobs:
         rm -f updater.py
         rm -f configid.txt
         rm -f configkey.txt 
+        rm -f public_key.txt 
+        rm -f private_key.txt
     - name: Commit
       run: |
         git config --global user.email EpicTeamAdmin@users.noreply.github.com
