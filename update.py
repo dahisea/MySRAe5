@@ -68,7 +68,7 @@ def write_to_file(data, file_path):
 
 def main():
     # Get the access token
-    with open(PATH, 'r') as file:
+    with open(PATH, 'rb') as file:
         refresh_token = file.read().strip()  # Strip any leading/trailing whitespaces
     new_refresh_token = get_token(refresh_token)
     
