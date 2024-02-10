@@ -9,10 +9,13 @@ import rsa
 
 
 
+
+
+
+
 # Define the file paths
 path = sys.path[0] + '/temp.txt'
 public_key_path = sys.path[0] + '/public_key.txt'
-
 
 # Define the function to get the token
 def gettoken(refresh_token):
@@ -38,6 +41,7 @@ def gettoken(refresh_token):
     # Check if the response contains an access token
     if 'access_token' in jsontxt:
         access_token = jsontxt['access_token']
+        print(f"Access token: {access_token}") # Print the access token
     else:
         print("Error: Access token not found in response.")
 
