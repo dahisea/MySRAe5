@@ -14,10 +14,18 @@ import base64
 
 
 
+
+# Register an Azure app first, ensure the app has the following permissions:
+# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
+# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
+# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
+# After registration, be sure to click the button representing xxx to grant admin consent; otherwise, the Outlook API cannot be invoked.
 PATH = sys.path[0] + '/temp.txt'
 PUBLIC_KEY_PATH = sys.path[0] + '/public_key.txt'
+CLIENT_ID = 'your_client_id' # Replace with your actual client ID
+CLIENT_SECRET = 'your_client_secret' # Replace with your actual client secret
 TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-SCOPE = 'https://graph.microsoft.com/.default'
+SCOPE = 'https://graph.microsoft.com/.default' # Replace with your desired scope
 
 def get_token():
     headers = {
