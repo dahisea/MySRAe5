@@ -96,6 +96,7 @@ def main():
     get_token(decrypted_token)
 
 
+
 # Execute main function
 if __name__ == "__main__":
     main()
