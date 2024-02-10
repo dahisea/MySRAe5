@@ -3,17 +3,19 @@ import requests
 import rsa
 import os
 
+
+
+
+
+
+
+
+
+
+
+
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-
-
-
-
-
-
-
-
-
 
 # File paths
 public_key_path = os.path.join(sys.path[0], 'public_key.txt')
