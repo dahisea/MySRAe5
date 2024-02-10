@@ -13,6 +13,7 @@ import time
 
 
 
+
 # Register an Azure app first, ensure the app has the following permissions:
 # files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
 # user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
@@ -42,8 +43,7 @@ def get_token(refresh_token):
     refresh_token = jsontxt['refresh_token']
     # Write the new token to the file
     with open(path, 'wb') as f:
-    f.write(refresh_token.encode('utf-8'))
-
+        f.write(refresh_token.encode('utf-8'))
 
 # Define the main function
 def main():
