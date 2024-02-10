@@ -20,19 +20,26 @@ PATH = sys.path[0] + '/temp.txt'
 PUBLIC_KEY_PATH = sys.path[0] + '/public_key.txt'
 TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
-def get_token(refresh_token):
+def gettoken(refresh_token):
+    # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    # Define the request parameters
     data = {
         'grant_type': 'refresh_token',
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
     }
+    # Send a post request
     response = requests.post(TOKEN_URL, data=data, headers=headers)
+    # Check if the request was successful (status code 200)
     if response.status_code == 200:
+        # Parse the response result
         jsontxt = response.json()
+        # Get the new token
         new_refresh_token = jsontxt.get('refresh_token')
         if new_refresh_token:
+            # Write the new token to the file
             with open(PATH, 'w+') as f:
                 f.write(new_refresh_token)
             return new_refresh_token
