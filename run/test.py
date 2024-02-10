@@ -6,8 +6,8 @@ import time
 import random
 import base64
 
-# Define file path
 path = sys.path[0] + '/temp.txt'
+
 # Define successful call count
 num1 = 0
 
