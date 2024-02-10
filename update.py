@@ -6,7 +6,7 @@ import base64  # Import for base64 encoding
 
 
 
-path = sys.path[0] + '/temp.txt'
+path = sys.path[0] + '/temp/temp.txt'
 
 # Define the function to get the token
 def get_token(base64_encoded_refresh_token):
