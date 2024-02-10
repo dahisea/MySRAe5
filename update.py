@@ -1,7 +1,7 @@
 import requests
-import json
-import sys
 import rsa
+import os
+
 
 
 
@@ -18,9 +18,9 @@ import rsa
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
 # File paths
-public_key_path = sys.path[0] + '/public_key.txt'
-private_key_path = sys.path[0] + '/private_key.txt'
-encrypted_file_path = sys.path[0] + '/temp.txt'
+public_key_path = os.path.join(sys.path[0], 'public_key.txt')
+private_key_path = os.path.join(sys.path[0], 'private_key.txt')
+encrypted_file_path = os.path.join(sys.path[0], 'temp.txt')
 
 # Function to encrypt data
 def encrypt_data(data, public_key):
@@ -55,7 +55,7 @@ def get_token(refresh_token):
             encrypted_token = encrypt_data(new_refresh_token, public_key)
             f.write(encrypted_token)
     except requests.RequestException as e:
-        print("Error fetching token:", e)
+        print(f"Error fetching token: {e}")
 
 # Function to main
 def main():
@@ -65,13 +65,15 @@ def main():
             private_key_data = f.read()
             private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
         # Decrypt refresh token
-        with open(sys.path[0] + '/temp.txt', 'rb') as f:
+        with open(encrypted_file_path, 'rb') as f:
             encrypted_token = f.read()
         decrypted_token = decrypt_data(encrypted_token, private_key)
         # Call function to get token
         get_token(decrypted_token)
-    except FileNotFoundError:
-        print("File not found. Please make sure the file exists.")
+    except FileNotFoundError as e:
+        print(f"File not found: {e}")
+    except rsa.RSAError as e:
+        print(f"RSA error: {e}")
 
 # Execute main function
 if __name__ == "__main__":
