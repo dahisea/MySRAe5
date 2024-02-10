@@ -33,8 +33,10 @@ def get_token(encrypted_refresh_token):
 
     # Decrypt the refresh token
     decrypted_refresh_token = private_key.decrypt(
-        encrypted_refresh_token, encryption_algorithm=serialization.NoPadding()
-    )
+    encrypted_refresh_token,
+    padding.NoPadding()
+)
+
 
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
