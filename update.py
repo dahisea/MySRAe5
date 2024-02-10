@@ -3,7 +3,6 @@ import requests
 import rsa
 import os
 import multiprocessing
-import yaml # 导入 yaml 模块
 
 
 
