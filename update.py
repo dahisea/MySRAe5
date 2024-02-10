@@ -20,6 +20,9 @@ import rsa
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
+# Client ID and secret
+CLIENT_ID = 'YOUR_CLIENT_ID'
+CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
 
 def encrypt_data(data, public_key):
   return rsa.encrypt(data.encode(), public_key)
@@ -48,8 +51,7 @@ def get_token(refresh_token):
     access_token = token_data['access_token']
     # Write new token to file
     with open('temp.txt', 'wb') as f:
-      encrypted_token = encrypt_data(new_refresh_token, public_key)
-      f.write(encrypted_token)
+      f.write(new_refresh_token.encode())
   except requests.RequestException as e:
     print(f"Error fetching token: {e}")
 
@@ -58,9 +60,6 @@ def read_private_key():
     # Read private key
     with open('private_key.txt', 'rb') as f:
       private_key_data = f.read()
-    # Check if data is a sequence
-    if isinstance(private_key_data, Sequence):
-      raise TypeError("Private key data should be bytes, not a sequence.")
     # Load private key
     private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
     return private_key
@@ -72,7 +71,7 @@ def read_private_key():
 def decrypt_refresh_token(encrypted_token, private_key):
   try:
     # Decrypt refresh token
-    decrypted_token = decrypt_data(encrypted_token, private_key)
+    decrypted_token = rsa.decrypt(encrypted_token, private_key).decode()
     return decrypted_token
   except rsa.DecryptionError as e:
     print(f"Error decrypting refresh token: {e}")
