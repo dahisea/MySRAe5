@@ -26,7 +26,7 @@ jobs:
         CONFIG_ID: ${{ secrets.CONFIG_ID }}
         CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
       run: | 
-        cp test.py run.py
+        cp ${{ github.workspace }}/run/test.py ${{ github.workspace }}/run.py
         echo $CONFIG_ID > config_id.txt
         echo $CONFIG_KEY > config_key.txt
         sed -i '10 r config_id.txt' run.py
