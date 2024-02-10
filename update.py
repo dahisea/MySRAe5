@@ -50,7 +50,7 @@ def gettoken(refresh_token):
 # Define the main function
 def main():
     # Open the file
-    with open(path, "r+") as fo:
+    with open(path, "rb") as fo:
         # Read the file content
         refresh_token = fo.read()
     # Call the function to get the token
