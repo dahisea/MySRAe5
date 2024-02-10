@@ -1,7 +1,6 @@
 import sys
 import requests
 import rsa
-import os
 
 
 
@@ -18,9 +17,9 @@ import os
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
 # File paths
-public_key_path = os.path.join(sys.path[0], 'public_key.txt')
-private_key_path = os.path.join(sys.path[0], 'private_key.txt')
-encrypted_file_path = os.path.join(sys.path[0], 'temp.txt')
+public_key_path = 'public_key.txt'
+private_key_path = 'private_key.txt'
+encrypted_file_path = 'temp.txt'
 
 # Function to encrypt data
 def encrypt_data(data, public_key):
