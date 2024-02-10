@@ -62,8 +62,7 @@ def main():
     try:
         # Read private key
         with open(private_key_path, 'rb') as f:
-            private_key_data = f.read()
-            private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
+            private_key = rsa.PrivateKey.load_pkcs1(f.read())
         # Decrypt refresh token
         with open(sys.path[0] + '/temp.txt', 'rb') as f:
             encrypted_token = f.read()
