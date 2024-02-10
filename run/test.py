@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import requests as req
 import json
 import sys
@@ -8,14 +7,20 @@ import base64
 
 path = sys.path[0] + '/temp/temp.txt'
 
-# Define successful call count
-numa = 0
-
 # Define client id and secret (replace with your actual values)
 
 
 
-# Define the function to get a token
+
+
+
+
+
+
+# Define successful call count
+num_successful_calls = 0
+
+# Define the function to get an access token
 def get_access_token(refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
@@ -25,50 +30,39 @@ def get_access_token(refresh_token):
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
     }
-    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
-    jsontxt = json.loads(html.text)
-    new_refresh_token = jsontxt['refresh_token']
-    access_token = jsontxt['access_token']
+    response = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
+    response.raise_for_status()  # Raise an exception for non-200 status codes
+    json_data = json.loads(response.text)
+    new_refresh_token = json_data['refresh_token']
+    access_token = json_data['access_token']
     return access_token
 
 # Define the function to test API availability
-def main():
-    with open(path, "r+") as file:
-        base64_encoded_refresh_token = file.read()
-        refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
+def test_api_availability():
+    try:
+        global num_successful_calls
+        with open(path, "r+") as file:
+            base64_encoded_refresh_token = file.read()
+            refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
 
-    global numa
-    localtime = time.asctime(time.localtime(time.time()))
-    access_token = get_access_token(refresh_token)
-    headers = {
-        'Authorization': access_token,
-        'Content-Type': 'application/json'
-    }
-    print('This run started at:', localtime)
-    urls = [
-        'https://graph.microsoft.com/v1.0/me/drive/root',
-        'https://graph.microsoft.com/v1.0/me/drive',
-        'https://graph.microsoft.com/v1.0/drive/root',
-        'https://graph.microsoft.com/v1.0/users',
-        'https://graph.microsoft.com/v1.0/me/messages',
-        'https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messageRules',
-        'https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messageRules',
-        'https://graph.microsoft.com/v1.0/me/drive/root/children',
-        'https://api.powerbi.com/v1.0/myorg/apps',
-        'https://graph.microsoft.com/v1.0/me/mailFolders',
-        'https://graph.microsoft.com/v1.0/me/outlook/masterCategories'
-    ]
+        localtime = time.asctime(time.localtime(time.time()))
+        access_token = get_access_token(refresh_token)
+        headers = {'Authorization': f"Bearer {access_token}", 'Content-Type': 'application/json'}
+        print('This run started at:', localtime)
+        urls = [
+            # ... your list of URLs
+        ]
 
-    for i, url in enumerate(urls):
-        try:
-            if req.get(url, headers=headers).status_code == 200:
-                numa += 1
-                print(f"{i+1} Call successful {numa} times")
-        except:
-            print("pass")
-            pass
+        for i, url in enumerate(urls):
+            response = req.get(url, headers=headers)
+            response.raise_for_status()  # Raise an exception for non-200 status codes
+            print(f"{i+1}. Call to {url} successful ({num_successful_calls + 1} successful calls in total)")
+            num_successful_calls += 1
 
-# Execute 6 times
+    except Exception as e:
+        print(f"Error occurred: {e}")
+
+# Execute 6 times with random intervals
 for _ in range(6):
-    main()
+    test_api_availability()
     time.sleep(random.randint(100, 300))
