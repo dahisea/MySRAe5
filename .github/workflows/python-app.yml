@@ -3,9 +3,6 @@ name: Build
 on:
   release:
     types: [published]
-  push:
-    tags:
-    - 'v*'
   schedule:
     - cron: "0 * * * 1-4"
   watch:
