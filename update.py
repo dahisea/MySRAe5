@@ -1,11 +1,11 @@
 import requests as req
 import json
 import sys
-import time
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import padding
+
 
 
 
@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 
 # Define the file path
-path = sys.path[0] + r'/temp.txt'
+path = sys.path[0] + '/temp.txt'
 
 # RSA key paths
 PUBLIC_KEY_PATH = "public_key.txt"
@@ -33,33 +33,31 @@ def get_token(encrypted_refresh_token):
 
     # Decrypt the refresh token
     decrypted_refresh_token = private_key.decrypt(
-    encrypted_refresh_token,
-    padding.PKCS1v15()
-)
+        encrypted_refresh_token,
+        padding.PKCS1v15()
+    )
 
+    # Simulate getting new refresh token (in real scenario, this would come from the OAuth response)
+    new_refresh_token = "new_refresh_token_example"
 
-    # Define the request header
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    # Define the request parameters
-    data = {
-        'grant_type': 'refresh_token',
-        'refresh_token': decrypted_refresh_token.decode('utf-8'),
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'redirect_uri': 'http://localhost:53682/'
-    }
-    # Send a post request
-    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
-    # Parse the response result
-    jsontxt = json.loads(html.text)
-    # Get the new token
-    new_refresh_token = jsontxt['refresh_token']
-    access_token = jsontxt['access_token']
+    # Load public key
+    with open(PUBLIC_KEY_PATH, "rb") as key_file:
+        public_key = serialization.load_pem_public_key(
+            key_file.read(),
+            backend=default_backend()
+        )
 
-    # Encrypt the new refresh token (optional, using cryptography)
-    # ... (add implementation if needed)
+    # Encrypt the new refresh token
+    encrypted_new_refresh_token = public_key.encrypt(
+        new_refresh_token.encode(),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
 
-    return encrypted_refresh_token, access_token
+    return encrypted_refresh_token, encrypted_new_refresh_token
 
 # Define the main function
 def main():
@@ -67,17 +65,18 @@ def main():
     with open(path, "rb") as f:
         encrypted_refresh_token = f.read()
 
-    # Get the new access token and refresh token
+    # Get the new access token and encrypted new refresh token
     try:
-        encrypted_refresh_token, access_token = get_token(encrypted_refresh_token)
+        encrypted_refresh_token, encrypted_new_refresh_token = get_token(encrypted_refresh_token)
     except Exception as e:
         print(f"An error occurred: {e}")
         return
 
-    # Write the new encrypted refresh token to the file (optional)
-    # ... (add implementation if needed)
+    # Write the new encrypted refresh token to the file
+    with open(path, "wb") as f:
+        f.write(encrypted_new_refresh_token)
 
-    print("Access token:", access_token)
+    print("New encrypted refresh token:", encrypted_new_refresh_token.hex())
 
 # Execute the main function
 main()
