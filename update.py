@@ -14,9 +14,6 @@ import rsa
 
 
 
-
-
-
 # Define the file path
 path = sys.path[0] + r'/temp.txt'
 
@@ -63,7 +60,14 @@ def main():
         encrypted_refresh_token = f.read()
 
     # Get the new access token and refresh token
-    encrypted_refresh_token, access_token = get_token(encrypted_refresh_token)
+    try:
+        encrypted_refresh_token, access_token = get_token(encrypted_refresh_token)
+    except rsa.pkcs1.DecryptionError as e:
+        print(f"Error decrypting refresh token: {e}")
+        return
+    except Exception as e:
+        print(f"An unknown error occurred: {e}")
+        return
 
     # Write the new encrypted refresh token to the file
     with open(path, "wb") as f:
