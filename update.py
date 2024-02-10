@@ -1,9 +1,6 @@
 import requests as req
-import json
 import sys
 import rsa
-
-
 
 
 
@@ -14,6 +11,7 @@ import rsa
 # Define the file paths
 path = sys.path[0] + '/temp.txt'
 public_key_path = sys.path[0] + '/public_key.txt'
+
 
 # Define the function to get the token
 def gettoken(refresh_token):
