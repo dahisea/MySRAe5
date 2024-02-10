@@ -4,15 +4,24 @@ import json
 import sys
 import time
 
+
+
+
+
+
+
+
+
+
+
+# Register an Azure app first, ensure the app has the following permissions:
+# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
+# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
+# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
+# After registration, be sure to click the button representing xxx to grant admin consent; otherwise, the Outlook API cannot be invoked.
+
 # Define the file path
 path = sys.path[0] + r'/temp.txt'
-
-
-
-
-
-
-
 
 # Define the function to get the token
 def get_token(refresh_token):
@@ -27,29 +36,23 @@ def get_token(refresh_token):
         'redirect_uri': 'http://localhost:53682/'
     }
     # Send a post request
-    response = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
+    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
     # Parse the response result
-    if response.status_code == 200:
-        jsontxt = response.json()
-        new_refresh_token = jsontxt.get('refresh_token')
-        if new_refresh_token:
-            # Write the new token to the file
-            with open(path, 'w+') as f:
-                f.write(new_refresh_token)
-        else:
-            print("Error: Refresh token not found in response.")
-    else:
-        print(f"Error: Failed to get token - HTTP {response.status_code}")
+    jsontxt = json.loads(html.text)
+    # Get the new token
+    refresh_token = jsontxt['refresh_token']
+    # Write the new token to the file
+    with open(path, 'w+') as f:
+        f.write(refresh_token)
 
 # Define the main function
 def main():
     # Open the file
-    with open(path, "r") as fo:
+    with open(path, "r+") as fo:
         # Read the file content
-        refresh_token = fo.read().strip()
+        refresh_token = fo.read()
     # Call the function to get the token
     get_token(refresh_token)
 
 # Execute the main function
-if __name__ == "__main__":
-    main()
+main()
