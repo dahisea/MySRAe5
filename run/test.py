@@ -16,11 +16,11 @@ numa = 0
 
 
 # Define the function to get a token
-def get_access_token(decoded_refresh_token):
+def get_access_token(refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
         'grant_type': 'refresh_token',
-        'refresh_token': decoded_refresh_token,
+        'refresh_token': refresh_token,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
@@ -35,11 +35,11 @@ def get_access_token(decoded_refresh_token):
 def main():
     with open(path, "r+") as file:
         base64_encoded_refresh_token = file.read()
-        decoded_refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
+        refresh_token = base64.b64decode(base64_encoded_refresh_token).decode('utf-8')
 
     global numa
     localtime = time.asctime(time.localtime(time.time()))
-    access_token = get_access_token(decoded_refresh_token)
+    access_token = get_access_token(refresh_token)
     headers = {
         'Authorization': access_token,
         'Content-Type': 'application/json'
