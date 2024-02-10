@@ -44,6 +44,7 @@ def get_token(refresh_token):
     with open(path, 'wb') as f:
     f.write(refresh_token.encode('utf-8'))
 
+
 # Define the main function
 def main():
     # Open the file
