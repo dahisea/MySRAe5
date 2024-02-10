@@ -9,13 +9,10 @@ import rsa
 
 
 
-
-
-
-
 # Define the file paths
 path = sys.path[0] + '/temp.txt'
 public_key_path = sys.path[0] + '/public_key.txt'
+
 
 # Define the function to get the token
 def gettoken(refresh_token):
@@ -51,12 +48,13 @@ def main():
     with open(path, "rb") as fo: # Use with statement to automatically close the file
         # Read the file content
         encrypted_refresh_token = fo.read()
-    # RSA decrypt the refresh token
+    # RSA encrypt the refresh token
     with open(public_key_path, "rb") as key_file: # Use with statement to automatically close the file
         public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
-        refresh_token = rsa.decrypt(encrypted_refresh_token, public_key).decode()
-    # Call the function to get the token
-    gettoken(refresh_token)
+        encrypted_token = rsa.encrypt(refresh_token.encode(), public_key)
+    # Write the encrypted token to the file
+    with open(path, 'wb') as f:
+        f.write(encrypted_token)
 
 # Execute the main function
 main()
