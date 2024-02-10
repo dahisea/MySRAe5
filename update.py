@@ -1,4 +1,7 @@
-import requests
+import requests as req
+import json
+import sys
+import time
 import rsa
 
 
@@ -11,81 +14,57 @@ import rsa
 
 
 
+# Define the file path
+path = sys.path[0] + r'/temp.txt'
 
+# RSA key paths
+PUBLIC_KEY_PATH = "public_key.pem"
+PRIVATE_KEY_PATH = "private_key.pem"
 
+# Define the function to get the token
+def get_token(encrypted_refresh_token):
+    # Decrypt the refresh token
+    with open(PRIVATE_KEY_PATH, "rb") as f:
+        private_key = rsa.PrivateKey.load_pkcs1(f.read())
+    refresh_token = rsa.decrypt(encrypted_refresh_token, private_key)
 
+    # Define the request header
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    # Define the request parameters
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token.decode('utf-8'),
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'redirect_uri': 'http://localhost:53682/'
+    }
+    # Send a post request
+    html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data, headers=headers)
+    # Parse the response result
+    jsontxt = json.loads(html.text)
+    # Get the new token
+    new_refresh_token = jsontxt['refresh_token']
+    access_token = jsontxt['access_token']
 
+    # Encrypt the new refresh token
+    with open(PUBLIC_KEY_PATH, "rb") as f:
+        public_key = rsa.PublicKey.load_pkcs1(f.read())
+    encrypted_refresh_token = rsa.encrypt(new_refresh_token.encode('utf-8'), public_key)
 
+    return encrypted_refresh_token, access_token
 
-
-
-
-# Define constants
-TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-
-
-def encrypt_data(data, public_key):
-  return rsa.encrypt(data.encode(), public_key)
-
-def decrypt_data(encrypted_data, private_key):
-  return rsa.decrypt(encrypted_data, private_key).decode()
-
-def get_token(refresh_token):
-  # Request headers
-  headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-  # Request parameters
-  data = {
-    'grant_type': 'refresh_token',
-    'refresh_token': refresh_token,
-    'client_id': CLIENT_ID,
-    'client_secret': CLIENT_SECRET,
-    'redirect_uri': 'http://localhost:53682/'
-  }
-  try:
-    # Send POST request
-    response = requests.post(TOKEN_ENDPOINT, data=data, headers=headers)
-    response.raise_for_status()  # Raise error for bad status codes
-    # Parse response
-    token_data = response.json()
-    new_refresh_token = token_data['refresh_token']
-    access_token = token_data['access_token']
-    # Write new token to file
-    with open('temp.txt', 'wb') as f:
-      f.write(new_refresh_token.encode())
-  except requests.RequestException as e:
-    print(f"Error fetching token: {e}")
-
-def read_private_key():
-  try:
-    # Read private key
-    with open('private_key.txt', 'rb') as f:
-      private_key_data = f.read()
-    # Load private key
-    private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
-    return private_key
-  except FileNotFoundError as e:
-    print(f"File not found: {e}")
-  except rsa.DecryptionError as e:
-    print(f"Error decrypting private key: {e}")
-
-def decrypt_refresh_token(encrypted_token, private_key):
-  try:
-    # Decrypt refresh token
-    decrypted_token = rsa.decrypt(encrypted_token, private_key).decode()
-    return decrypted_token
-  except rsa.DecryptionError as e:
-    print(f"Error decrypting refresh token: {e}")
-
+# Define the main function
 def main():
-  # Read encrypted token
-  with open('temp.txt', 'rb') as f:
-    encrypted_token = f.read()
-  # Decrypt refresh token
-  private_key = read_private_key()
-  decrypted_token = decrypt_refresh_token(encrypted_token, private_key)
-  # Call function to get token
-  get_token(decrypted_token)
+    # Read the encrypted refresh token from the file
+    with open(path, "rb") as f:
+        encrypted_refresh_token = f.read()
 
-# Execute main function
-if __name__ == "__main__":
-  main()
+    # Get the new access token and refresh token
+    encrypted_refresh_token, access_token = get_token(encrypted_refresh_token)
+
+    # Write the new encrypted refresh token to the file
+    with open(path, "wb") as f:
+        f.write(encrypted_refresh_token)
+
+# Execute the main function
+main()
