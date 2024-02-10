@@ -9,7 +9,7 @@ import base64
 path = sys.path[0] + '/temp.txt'
 
 # Define successful call count
-num1 = 0
+numa = 0
 
 # Define client id and secret (replace with your actual values)
 
@@ -37,7 +37,7 @@ def main():
         encoded_refresh_token = fo.read()
         refresh_token = base64.b64decode(encoded_refresh_token).decode('utf-8')
 
-    global num1
+    global numa
     localtime = time.asctime(time.localtime(time.time()))
     access_token = get_token(refresh_token)
     headers = {
@@ -62,8 +62,8 @@ def main():
     for i, url in enumerate(urls):
         try:
             if req.get(url, headers=headers).status_code == 200:
-                num1 += 1
-                print(f"{i+1} Call successful {num1} times")
+                numa += 1
+                print(f"{i+1} Call successful {numa} times")
         except:
             print("pass")
             pass
