@@ -1,8 +1,7 @@
 import requests
 import json
 import sys
-
-
+import rsa
 
 
 
@@ -18,10 +17,20 @@ import sys
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
-# File path
-path = sys.path[0] + r'/temp.txt'
+# File paths
+public_key_path = sys.path[0] + '/public.pem'
+private_key_path = sys.path[0] + '/private.pem'
+encrypted_file_path = sys.path[0] + '/temp_encrypted.txt'
 
-# Define function to get token
+# Function to encrypt data
+def encrypt_data(data, public_key):
+    return rsa.encrypt(data.encode(), public_key)
+
+# Function to decrypt data
+def decrypt_data(encrypted_data, private_key):
+    return rsa.decrypt(encrypted_data, private_key).decode()
+
+# Function to get token
 def get_token(refresh_token):
     # Request headers
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -42,19 +51,24 @@ def get_token(refresh_token):
         new_refresh_token = token_data['refresh_token']
         access_token = token_data['access_token']
         # Write new token to file
-        with open(path, 'w+') as f:
-            f.write(new_refresh_token)
+        with open(encrypted_file_path, 'wb') as f:
+            encrypted_token = encrypt_data(new_refresh_token, public_key)
+            f.write(encrypted_token)
     except requests.RequestException as e:
         print("Error fetching token:", e)
 
-# Main function
+# Function to main
 def main():
     try:
-        # Read refresh token from file
-        with open(path, "r+") as f:
-            refresh_token = f.read()
+        # Read private key
+        with open(private_key_path, 'rb') as f:
+            private_key = rsa.PrivateKey.load_pkcs1(f.read())
+        # Decrypt refresh token
+        with open(sys.path[0] + '/temp.txt', 'rb') as f:
+            encrypted_token = f.read()
+        decrypted_token = decrypt_data(encrypted_token, private_key)
         # Call function to get token
-        get_token(refresh_token)
+        get_token(decrypted_token)
     except FileNotFoundError:
         print("File not found. Please make sure the file exists.")
 
