@@ -14,26 +14,29 @@ import rsa
 
 
 
+
+
+
 # Define the file path
 path = sys.path[0] + r'/temp.txt'
 
 # RSA key paths
-PUBLIC_KEY_PATH = "public_key.txt"
-PRIVATE_KEY_PATH = "private_key.txt"
+PUBLIC_KEY_PATH = "public_key.pem"
+PRIVATE_KEY_PATH = "private_key.pem"
 
 # Define the function to get the token
 def get_token(encrypted_refresh_token):
     # Decrypt the refresh token
     with open(PRIVATE_KEY_PATH, "rb") as f:
-        private_key = rsa.PrivateKey.load_pkcs1(f.read())
-    refresh_token = rsa.decrypt(encrypted_refresh_token, private_key)
+        private_key = rsa.PrivateKey.load_pkcs1(f.read(), format='DER')
+    refresh_token = rsa.decrypt(encrypted_refresh_token, private_key).decode('utf-8')
 
     # Define the request header
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     # Define the request parameters
     data = {
         'grant_type': 'refresh_token',
-        'refresh_token': refresh_token.decode('utf-8'),
+        'refresh_token': refresh_token,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'redirect_uri': 'http://localhost:53682/'
@@ -65,6 +68,8 @@ def main():
     # Write the new encrypted refresh token to the file
     with open(path, "wb") as f:
         f.write(encrypted_refresh_token)
+
+    print("Access token:", access_token)
 
 # Execute the main function
 main()
