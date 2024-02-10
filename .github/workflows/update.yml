@@ -27,16 +27,14 @@ jobs:
     - name: Install rsa
       run: pip install rsa
     - name: Read config from secrets
-      env: 
-        CONFIG_ID: ${{ secrets.CONFIG_ID }}
-        CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        P_KEY: ${{ secrets.P_KEY }}
       run: | 
         cp update.py updater.py
-        echo $CONFIG_ID > configid.txt
-        echo $CONFIG_KEY > configkey.txt
+        echo "${{ secrets.CONFIG_ID }}" > configid.txt
         sed -i '6 r configid.txt' updater.py
+        echo "${{ secrets.CONFIG_KEY }}" > configkey.txt
         sed -i '8 r configkey.txt' updater.py
+        echo "${{ secrets.YOUR_PUBLIC_KEY_SECRET }}" | sed 's/\\n/\n/g' > public_key.txt
+        
     - name: Update token
       run: python updater.py
     - name: Delete secrets config
