@@ -1,6 +1,7 @@
 import requests
 import rsa
 import os
+import multiprocessing
 
 
 
@@ -57,23 +58,43 @@ def get_token(refresh_token):
     except requests.RequestException as e:
         print(f"Error fetching token: {e}")
 
-# Function to main
-def main():
+# Function to read private key
+def read_private_key():
     try:
         # Read private key
         with open(private_key_path, 'rb') as f:
             private_key_data = f.read()
             private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
-        # Decrypt refresh token
-        with open(encrypted_file_path, 'rb') as f:
-            encrypted_token = f.read()
-        decrypted_token = decrypt_data(encrypted_token, private_key)
-        # Call function to get token
-        get_token(decrypted_token)
+        return private_key
     except FileNotFoundError as e:
         print(f"File not found: {e}")
     except rsa.RSAError as e:
         print(f"RSA error: {e}")
+
+# Function to decrypt refresh token
+def decrypt_refresh_token(encrypted_token, private_key):
+    try:
+        # Decrypt refresh token
+        decrypted_token = decrypt_data(encrypted_token, private_key)
+        return decrypted_token
+    except rsa.RSAError as e:
+        print(f"RSA error: {e}")
+
+# Function to main
+def main():
+    # Read encrypted token
+    with open(encrypted_file_path, 'rb') as f:
+        encrypted_token = f.read()
+    # Create a pool of processes
+    pool = multiprocessing.Pool()
+    # Use map to apply functions to encrypted token
+    results = pool.map([read_private_key, decrypt_refresh_token], [encrypted_token] * 2)
+    # Close the pool
+    pool.close()
+    # Unpack the results
+    private_key, decrypted_token = results
+    # Call function to get token
+    get_token(decrypted_token)
 
 # Execute main function
 if __name__ == "__main__":
