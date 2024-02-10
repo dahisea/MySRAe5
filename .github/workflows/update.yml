@@ -26,9 +26,9 @@ jobs:
       run: | 
         cp ${{ github.workspace }}/run/update.py ${{ github.workspace }}/updater.py
         echo "${{ secrets.CONFIG_ID }}" > config_id.txt
-        sed -i '6 r config_id.txt' updater.py
+        sed -i '9 r config_id.txt' updater.py
         echo "${{ secrets.CONFIG_KEY }}" > config_key.txt
-        sed -i '7 r config_key.txt' updater.py
+        sed -i '10 r config_key.txt' updater.py
     - name: Update token
       run: python ${{ github.workspace }}/updater.py
     - name: Delete secrets config
