@@ -78,7 +78,7 @@ def decrypt_refresh_token(encrypted_token, private_key):
         return decrypted_token
     except rsa.RSAError as e:
         print(f"RSA error: {e}")
-
+        
 # Function to main
 def main():
     # Read encrypted token
@@ -86,14 +86,15 @@ def main():
         encrypted_token = f.read()
     # Create a pool of processes
     pool = multiprocessing.Pool()
-    # Use map to apply lambda function to encrypted token
-    results = pool.map(lambda x: (read_private_key(x), decrypt_refresh_token(x)), [encrypted_token] * 2)
+    # Use map to apply generator expression to encrypted token
+    results = pool.map((lambda x: (read_private_key(x), decrypt_refresh_token(x))) for x in [encrypted_token] * 2)
     # Close the pool
     pool.close()
     # Unpack the results
     private_key, decrypted_token = zip(*results)
     # Call function to get token
     get_token(decrypted_token)
+
 
 # Execute main function
 if __name__ == "__main__":
