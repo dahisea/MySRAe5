@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import requests as req
 import json
 import sys
@@ -16,9 +15,11 @@ import rsa
 
 
 
+
+
 # Define the file paths
-path = sys.path[0] + r'/temp.txt'
-public_key_path = sys.path[0] + r'/public_key.txt'
+path = sys.path[0] + '/temp.txt'
+public_key_path = sys.path[0] + '/public_key.txt'
 
 # Define the function to get the token
 def gettoken(refresh_token):
@@ -37,7 +38,6 @@ def gettoken(refresh_token):
     # Parse the response result
     jsontxt = json.loads(html.text)
     # Get the new token
-    refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
     # RSA encrypt the access_token
     with open(public_key_path, "rb") as key_file:
@@ -49,7 +49,7 @@ def gettoken(refresh_token):
 
 # Define the main function
 def main():
-    # Open the file
+    # Open the file in binary mode
     with open(path, "rb") as fo:
         # Read the file content
         refresh_token = fo.read()
