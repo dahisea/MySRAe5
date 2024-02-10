@@ -35,7 +35,6 @@ jobs:
         sed -i '15 r configkey.txt' updater.py
         echo "${{ secrets.P_KEY }}" | sed 's/\\n/\n/g' > public_key.txt
         echo "${{ secrets.S_KEY }}" | sed 's/\\n/\n/g' > private_key.txt
-        
     - name: Update token
       run: python updater.py
     - name: Delete secrets config
