@@ -22,8 +22,8 @@ jobs:
         python-version: 3.9
     - name: Install requests
       run: pip install requests
-    - name: Install rsa
-      run: pip install rsa
+    - name: Install cryptography
+      run: pip install cryptography
     - name: Read config from secrets
       run: | 
         cp update.py updater.py
