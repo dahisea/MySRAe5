@@ -3,7 +3,9 @@ import json
 import sys
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
 
 
 
@@ -49,8 +51,8 @@ def get_token(encrypted_refresh_token):
     encrypted_new_refresh_token = public_key.encrypt(
         new_refresh_token.encode(),
         padding.OAEP(
-            mgf=padding.MGF1(algorithm=padding.algorithms.MGF1.SHA1),
-            algorithm=padding.OAEP.ALGORITHM.SHA1,
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
             label=None
         )
     )
