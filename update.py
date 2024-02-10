@@ -6,13 +6,6 @@ import base64  # Import for base64 encoding
 
 
 
-
-
-
-
-
-
-
 path = sys.path[0] + '/temp.txt'
 
 # Define the function to get the token
