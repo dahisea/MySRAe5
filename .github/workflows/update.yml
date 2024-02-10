@@ -24,16 +24,19 @@ jobs:
       run: pip install requests
     - name: Read config from secrets
       run: | 
-        cd run
+        cd /run/
         cp update.py updater.py
         echo "${{ secrets.CONFIG_ID }}" > config_id.txt
         sed -i '6 r config_id.txt' updater.py
         echo "${{ secrets.CONFIG_KEY }}" > config_key.txt
         sed -i '7 r config_key.txt' updater.py
     - name: Update token
-      run: python updater.py
+      run: |
+        cd /run/
+        python updater.py
     - name: Delete secrets config
       run: | 
+        cd /run/
         rm -f updater.py
         rm -f config_id.txt
         rm -f config_key.txt 
