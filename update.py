@@ -48,14 +48,18 @@ def get_token(encrypted_refresh_token):
         )
 
     # Encrypt the new refresh token
-    encrypted_new_refresh_token = public_key.encrypt(
-        new_refresh_token.encode(),
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
+    try:
+        encrypted_new_refresh_token = public_key.encrypt(
+            new_refresh_token.encode(),
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
         )
-    )
+    except Exception as e:
+        print(f"Encryption failed: {e}")
+        raise e
 
     return encrypted_refresh_token, encrypted_new_refresh_token
 
