@@ -1,16 +1,25 @@
 import requests
 import rsa
-import json
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Define constants
 TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
-# Get configuration
-config = json.load(open('config.json'))
-
-# Get client ID and secret
-CLIENT_ID = config['client_id']
-CLIENT_SECRET = config['client_secret']
 
 def encrypt_data(data, public_key):
   return rsa.encrypt(data.encode(), public_key)
