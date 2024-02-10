@@ -4,17 +4,16 @@ import json
 import sys
 import time
 import random
-
-# Register an Azure app with the following permissions:
-# files: Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All
-# user: User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All
-# mail: Mail.Read, Mail.ReadWrite, MailboxSettings.Read, MailboxSettings.ReadWrite
-# Make sure to grant admin consent after registration for Outlook API to work
+import base64
 
 # Define file path
 path = sys.path[0] + '/temp.txt'
 # Define successful call count
 num1 = 0
+
+# Define client id and secret (replace with your actual values)
+
+
 
 # Define the function to get a token
 def get_token(refresh_token):
@@ -35,7 +34,8 @@ def get_token(refresh_token):
 # Define the function to test API availability
 def main():
     with open(path, "r+") as fo:
-        refresh_token = fo.read()
+        encoded_refresh_token = fo.read()
+        refresh_token = base64.b64decode(encoded_refresh_token).decode('utf-8')
 
     global num1
     localtime = time.asctime(time.localtime(time.time()))
