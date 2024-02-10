@@ -22,8 +22,6 @@ jobs:
         python-version: 3.9
     - name: Install requests
       run: pip install requests
-    - name: Install cryptography
-      run: pip install cryptography
     - name: Read config from secrets
       run: | 
         cp update.py updater.py
@@ -31,8 +29,6 @@ jobs:
         sed -i '14 r configid.txt' updater.py
         echo "${{ secrets.CONFIG_KEY }}" > configkey.txt
         sed -i '15 r configkey.txt' updater.py
-        echo "${{ secrets.P_KEY }}" | sed 's/\\n/\n/g' > public_key.txt
-        echo "${{ secrets.S_KEY }}" | sed 's/\\n/\n/g' > private_key.txt
     - name: Update token
       run: python updater.py
     - name: Delete secrets config
